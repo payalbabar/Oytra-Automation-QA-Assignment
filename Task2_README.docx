@@ -23,3 +23,8 @@ The final report is delivered through Telegram notifications.
 
 Error Handling:
 Workflow executions are monitored through n8n execution logs. Failed API calls can be identified and reviewed without silently stopping the workflow.
+
+## Demo Video
+
+Loom Recording:
+https://www.loom.com/share/cbc8f316e3034a53907c67d422f5df68
