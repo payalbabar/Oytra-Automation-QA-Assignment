@@ -1,0 +1,25 @@
+Task 2 – n8n API Integration Workflow
+
+APIs Used:
+
+1. CoinGecko Markets API
+2. CoinGecko Global API
+
+Workflow Description:
+
+* A Schedule Trigger runs every 1 hour.
+* The first HTTP Request fetches cryptocurrency market data from CoinGecko.
+* A JavaScript Code node filters the top 5 cryptocurrency results.
+* The second HTTP Request fetches global cryptocurrency market statistics.
+* An IF node checks whether the number of active cryptocurrencies is greater than 10,000.
+* If the condition is true, a market health report is generated.
+* The report is sent automatically to a Telegram bot.
+
+Transformation:
+The workflow filters the API response and keeps only the top 5 cryptocurrency results.
+
+Output:
+The final report is delivered through Telegram notifications.
+
+Error Handling:
+Workflow executions are monitored through n8n execution logs. Failed API calls can be identified and reviewed without silently stopping the workflow.

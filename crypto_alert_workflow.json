@@ -1,0 +1,224 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3804e952-777a-4044-8688-df33cf78de12",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "edaf1822-6bf6-4997-8cff-55bc64f0b1c8",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const top5 = $input.all().slice(0, 5);\n\nreturn top5.map(item => ({\n  json: {\n    name: item.json.name,\n    symbol: item.json.symbol,\n    current_price: item.json.current_price,\n    market_cap: item.json.market_cap\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "d3e59699-6121-4a6d-84e3-c2e9aaee4a03",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "https://api.coingecko.com/api/v3/global",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "cb5be78f-211e-49c2-a05a-0c1928e8b5f0",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "07be9e8c-ad56-4ccf-b9aa-6a6e7650d23b",
+              "leftValue": "={{$json[\"data\"][\"active_cryptocurrencies\"]}}",
+              "rightValue": 10000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        0
+      ],
+      "id": "f005a630-8784-4a5b-96f7-93e14ecd5479",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfbf79a9-93a1-4a6c-a10e-23eaaef2ad80",
+              "name": "status",
+              "value": "=🚀 Crypto Market Health Report  Active Cryptocurrencies: {{$json[\"data\"][\"active_cryptocurrencies\"]}}  Market Status: HEALTHY ✅  Generated via n8n Automation",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        -96
+      ],
+      "id": "bb1b492f-09fc-4b60-9314-909ef83360ae",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "8747052731",
+        "text": "={{$json.status}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1248,
+        -96
+      ],
+      "id": "120dfb60-7d51-4bc4-959d-3ec4ee48e021",
+      "name": "Send a text message",
+      "webhookId": "770e7e7e-f24d-4a9f-ad1e-1b48724801bd",
+      "credentials": {
+        "telegramApi": {
+          "id": "ad1lbNBzpfrDT6Gi",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "70fd9dd0-fbe7-4334-b361-b3ecd328b043",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "05154b0027a2f57ddf8852edf2b193c8b53c820bafaea98848d54788351a5a04"
+  },
+  "id": "g9AdQJxE1vW0wu7z",
+  "tags": []
+}
